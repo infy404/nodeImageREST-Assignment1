@@ -61,53 +61,58 @@ server.post('/images', function (req, res, next) {
   // Make sure name is defined
   if (req.params.name === undefined ) {
     // If there are any errors, pass them to next in the correct format
-    return next(new restify.InvalidArgumentError('name must be supplied'))
+    return next(new restify.InvalidArgumentError('Name of the image must be provided'))
   }
   if (req.params.url === undefined ) {
     // If there are any errors, pass them to next in the correct format
-    return next(new restify.InvalidArgumentError('Name of the image must be supplied'))
+    return next(new restify.InvalidArgumentError('URL of the image must be provided'))
   }
   if (req.params.size == undefined){
     return next(new restify.InvalidArgumentError('Size of the image must be provided'))
   }
   var newImage = {
 		name: req.params.name, 
-		age: req.params.url,
+		url: req.params.url,
     size: req.params.size
 	}
 
   // Adding the new Image using the persistence engine
-  imageSave.create( newImage, function (error, user) {
+  imageSave.create( newImage, function (error, image) {
 
     // If there are any errors, pass them to next in the correct format
     if (error) return next(new restify.InvalidArgumentError(JSON.stringify(error.errors)))
 
     // Send the user if no issues
-    res.send(201, user)
+    res.send(201, image)
   })
 })
 
 // Update a user by their id
-server.put('/users/:id', function (req, res, next) {
+server.put('/images/:id', function (req, res, next) {
 
   // Make sure name is defined
   if (req.params.name === undefined ) {
     // If there are any errors, pass them to next in the correct format
-    return next(new restify.InvalidArgumentError('name must be supplied'))
+    return next(new restify.InvalidArgumentError('Name of the Image must be provided'))
   }
-  if (req.params.age === undefined ) {
+  if (req.params.url === undefined ) {
     // If there are any errors, pass them to next in the correct format
-    return next(new restify.InvalidArgumentError('age must be supplied'))
+    return next(new restify.InvalidArgumentError('URL of the image must be provided'))
+  }
+
+  if(req.params.size === undefined) {
+    return next(new restify.InvalidArgumentError('Size of the image must be provided'))
   }
   
-  var newUser = {
+  var newImage = {
 		_id: req.params.id,
 		name: req.params.name, 
-		age: req.params.age
+		url: req.params.url,
+    size: req.params.size
 	}
   
   // Update the user with the persistence engine
-  usersSave.update(newUser, function (error, user) {
+  imageSave.update(newImage, function (error, image) {
 
     // If there are any errors, pass them to next in the correct format
     if (error) return next(new restify.InvalidArgumentError(JSON.stringify(error.errors)))
@@ -128,7 +133,7 @@ server.del('/users/:id', function (req, res, next) {
 
     // Send a 200 OK response
     res.send()
-  })
+  })  
 })
 
 
