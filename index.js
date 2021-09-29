@@ -2,6 +2,9 @@ var SERVER_NAME = 'images-api'
 var PORT = 5000;
 var HOST = '127.0.0.1';
 
+var get_counter = 0
+var request_counter = 0
+
 
 var restify = require('restify')
 
@@ -27,17 +30,25 @@ server
 
 // Get all images in the system
 server.get('/images', function (req, res, next) {
+  
+  console.log('> images GET: Received request')
+  
+  get_counter += 1
+
 
   // Find every entity within the given collection
   imageSave.find({}, function (error, images) {
 
     // Return all of the users in the system
+    console.log('< images GET: Sending Response')
     res.send(images)
   })
 })
 
 // Get a single image by the image id
 server.get('/image/:id', function (req, res, next) {
+
+  console.log('> images GET: Received request')
 
   // Find a single user by their id within save
   imageSave.findOne({ _id: req.params.id }, function (error, user) {
@@ -46,6 +57,7 @@ server.get('/image/:id', function (req, res, next) {
     if (error) return next(new restify.InvalidArgumentError(JSON.stringify(error.errors)))
 
     if (image) {
+      console.log('< Images GET: Sending Response')
       // Send the user if no issues
       res.send(image)
     } else {
@@ -57,7 +69,7 @@ server.get('/image/:id', function (req, res, next) {
 
 // Add a new image
 server.post('/images', function (req, res, next) {
-
+  console.log('> Images POST: Received Request')
   // Make sure name is defined
   if (req.params.name === undefined ) {
     // If there are any errors, pass them to next in the correct format
@@ -82,6 +94,7 @@ server.post('/images', function (req, res, next) {
     // If there are any errors, pass them to next in the correct format
     if (error) return next(new restify.InvalidArgumentError(JSON.stringify(error.errors)))
 
+    console.log('< Images POST: Sending Response')
     // Send the user if no issues
     res.send(201, image)
   })
@@ -89,7 +102,7 @@ server.post('/images', function (req, res, next) {
 
 // Update a user by their id
 server.put('/images/:id', function (req, res, next) {
-
+  console.log('> Images PUT: Received Request')
   // Make sure name is defined
   if (req.params.name === undefined ) {
     // If there are any errors, pass them to next in the correct format
@@ -117,16 +130,17 @@ server.put('/images/:id', function (req, res, next) {
     // If there are any errors, pass them to next in the correct format
     if (error) return next(new restify.InvalidArgumentError(JSON.stringify(error.errors)))
 
+    console.log('< Images PUT: Sending Response')
     // Send a 200 OK response
     res.send(200)
   })
 })
 
 // Delete user with the given id
-server.del('/users/:id', function (req, res, next) {
+server.del('/images/', function (req, res, next) {
 
   // Delete the user with the persistence engine
-  usersSave.delete(req.params.id, function (error, user) {
+  imageSave.delete(function (error, image) {
 
     // If there are any errors, pass them to next in the correct format
     if (error) return next(new restify.InvalidArgumentError(JSON.stringify(error.errors)))
